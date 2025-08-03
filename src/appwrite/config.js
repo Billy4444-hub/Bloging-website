@@ -20,7 +20,7 @@ export class Service{
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                slug,
+                slug, // as document ID
                 {
                     title,
                     content,
@@ -34,7 +34,7 @@ export class Service{
         }
     }
 
-    async updatePost(slug,{title,content, featuredImage, status, userId}){
+    async updatePost(slug, {title,content, featuredImage, status}){
         try{
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -45,7 +45,6 @@ export class Service{
                     content,
                     featuredImage,
                     status,
-                    userId,
                 }
             )
         }catch(error){
@@ -53,14 +52,13 @@ export class Service{
         }
     }
 
-    async deletePost(slug){
+    async getPost(slug){
         try {
            await this.databases.getDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug,
            )
-           // to see delete or not
            return true
         } catch (error) {
             console.log("Appwrite error :: getCurrentUser :: error", error);
@@ -68,7 +66,7 @@ export class Service{
         }
     }
 
-    async getPost(slug){
+    async deletePost(slug){
         try {
            await this.databases.deleteDocument(
                 conf.appwriteDatabaseId,
@@ -83,6 +81,7 @@ export class Service{
         }
     }
 
+    //if database doesnt have indexes then we cant apply query
     async getPosts(queries = [Query.equal("status", "active")]){
         try {
             return await this.databases.listDocuments(
@@ -125,7 +124,7 @@ export class Service{
     getFilePreview(fileId){
         return this.bucket.getFilePreview(
             conf.appwriteBucketId,
-            fileId  ,
+            fileId ,
         )
     }
 }
